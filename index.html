@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown Timer</title>
+    <title>Ring Countdown Timer</title>
     <style>
         body {
             background-color: #121212;
@@ -17,42 +17,57 @@
             height: 100vh;
             margin: 0;
         }
+
         #timer {
-            font-size: 3em;
+            font-size: 2em;
             margin-bottom: 20px;
         }
-        #progressContainer {
-            width: 80%;
-            background-color: #333;
-            border-radius: 25px;
+
+        .ring {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(#4CAF50 100%, transparent 0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        #progressBar {
-            width: 100%;
-            height: 30px;
-            background-color: #4CAF50;
-            border-radius: 25px;
-            transform-origin: right; /* Shrinks from right to left */
+
+        .ring::before {
+            content: '';
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            background-color: #121212;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .text {
+            position: absolute;
+            z-index: 2;
+            color: white;
+            font-size: 1.5em;
         }
     </style>
 </head>
 <body>
     <div id="timer">00:00:00</div>
-    <div id="progressContainer">
-        <div id="progressBar"></div>
+    <div class="ring">
+        <div class="text" id="time-left"></div>
     </div>
 
     <script>
-        // Set the target date and time
-        const targetDate = new Date('2024-10-18T07:00:00-05:00'); // Central Time (GMT-5)
-        const startDate = new Date('2024-10-17T07:00:00-05:00'); // Central Time (GMT-5)
+        const targetDate = new Date('2024-10-18T07:00:00-05:00'); // Target date
+        const startDate = new Date('2024-10-17T07:00:00-05:00'); // Start date
         
-        // Calculate total time (24 hours in milliseconds)
-        const totalTime = targetDate - startDate;
-        
-        function updateTimer() {
+        const totalTime = targetDate - startDate; // Total time in milliseconds
+
+        function updateRing() {
             const now = new Date();
             const timeLeft = targetDate - now;
-            
+
             // Calculate hours, minutes, and seconds left
             const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
@@ -64,25 +79,27 @@
                 (minutes < 10 ? '0' : '') + minutes + ':' + 
                 (seconds < 10 ? '0' : '') + seconds;
 
-            // Update progress bar
-            updateProgressBar(timeLeft);
-            
+            // Update the ring's progress
+            updateRingProgress(timeLeft);
+
             // If the countdown is over, stop updating
             if (timeLeft <= 0) {
                 clearInterval(countdownInterval);
                 document.getElementById("timer").innerHTML = "00:00:00";
-                document.getElementById("progressBar").style.width = "0%";
+                document.querySelector(".ring").style.background = 'conic-gradient(transparent 100%, transparent 0)';
             }
         }
 
-        function updateProgressBar(timeLeft) {
-            // Calculate percentage of time left
-            const percentage = (timeLeft / totalTime) * 100;
-            document.getElementById("progressBar").style.width = percentage + "%";
+        function updateRingProgress(timeLeft) {
+            // Calculate percentage of time passed
+            const percentage = ((totalTime - timeLeft) / totalTime) * 100;
+            // Update the ring's background using conic-gradient for the circular effect
+            document.querySelector('.ring').style.background = 
+                `conic-gradient(#4CAF50 ${percentage}%, transparent ${percentage}% 100%)`;
         }
 
         // Update the timer every second
-        const countdownInterval = setInterval(updateTimer, 1000);
+        const countdownInterval = setInterval(updateRing, 1000);
     </script>
 </body>
 </html>
