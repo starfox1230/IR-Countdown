@@ -86,14 +86,14 @@
             if (timeLeft <= 0) {
                 clearInterval(countdownInterval);
                 document.getElementById("timer").innerHTML = "00:00:00";
-                document.querySelector(".ring").style.background = 'conic-gradient(transparent 100%, transparent 0)';
+                document.querySelector(".ring").style.background = 'conic-gradient(transparent 100%, #4CAF50 0)';
             }
         }
 
         function updateRingProgress(timeLeft) {
-            // Calculate percentage of time passed
-            const percentage = ((totalTime - timeLeft) / totalTime) * 100;
-            // Update the ring's background using conic-gradient for the circular effect
+            // Calculate percentage of time left
+            const percentage = (timeLeft / totalTime) * 100;
+            // Reverse the gradient so the green part shrinks as time decreases
             document.querySelector('.ring').style.background = 
                 `conic-gradient(#4CAF50 ${percentage}%, transparent ${percentage}% 100%)`;
         }
